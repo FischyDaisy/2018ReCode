@@ -31,11 +31,11 @@ public class AlignToGoal extends CommandBase {
   private double turn;
   private double lastTime;
 
-  public AlignToGoal() {
+  public AlignToGoal(DriveTrain drive) {
     // Use addRequirements() here to declare subsystem dependencies.
     System.out.println("Created Command");
     mGoalTracker = GoalTracking.getInstance();
-    mDrive = DriveTrain.getInstance();
+    mDrive = drive;
     mRobotContainer = RobotContainer.getInstance();
     addRequirements(mDrive);
     distance = 0.0;

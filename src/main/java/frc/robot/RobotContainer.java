@@ -65,7 +65,7 @@ public class RobotContainer {
   public RobotContainer() {
     mDrive = DriveTrain.getInstance();
     mCommandScheduler = CommandScheduler.getInstance();
-    mAlignToGoal = new AlignToGoal();
+    //mAlignToGoal = new AlignToGoal(mDrive);
     // Configure the button bindings
     configureButtonBindings();
     // Configure the Commands
@@ -83,7 +83,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     mDriverController = new XboxController(Constants.XboxController.DRIVER_PORT);
     //mDriverController.ButtonA.whileHeld(() -> new AlignToGoal(), mDrive);
-    mDriverController.ButtonA.whenHeld(new AlignToGoal());
+    mDriverController.ButtonA.whenHeld(new AlignToGoal(mDrive));
     //mDriverController.ButtonA.whileHeld(() -> mCommandScheduler.schedule(new AlignToGoal()), mDrive);
     //mDriverController.ButtonA.whileHeld(mAlignToGoal);
   }
