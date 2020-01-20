@@ -7,6 +7,8 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
@@ -15,29 +17,32 @@ import frc.robot.subsystems.DriveTrain;
 public class DriveArcadeMode extends CommandBase {
   private RobotContainer mRobotContainer;
   private DriveTrain mDrive;
+  private DoubleSupplier mLeftY;
+  private DoubleSupplier mRightX;
   /**
    * Creates a new DriveArcadeMode.
    */
-  public DriveArcadeMode() {
+  public DriveArcadeMode(DriveTrain drive, DoubleSupplier leftY, DoubleSupplier rightX) {
     // Use addRequirements() here to declare subsystem dependencies.
-    mRobotContainer = RobotContainer.getInstance();
-    mDrive = DriveTrain.getInstance();
+    //mRobotContainer = RobotContainer.getInstance();
+    mDrive = drive;
+    mLeftY = leftY;
+    mRightX = rightX;
     addRequirements(mDrive);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    System.out.println("Initialize Command");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    mDrive.setSpeedTurn(mRobotContainer.mDriveLeftStickY, mRobotContainer.mDriveRightStickX);
-    SmartDashboard.putNumber("LeftStick Y", mRobotContainer.mDriveLeftStickY);
+    mDrive.setSpeedTurn(mLeftY.getAsDouble(), mRightX.getAsDouble());
+    SmartDashboard.putNumber("LeftStick Y", mLeftY.getAsDouble());
     // System.out.println("LeftStick Y: " + mRobotContainer.mDriveLeftStickY);
-    SmartDashboard.putNumber("RigthStick X", mRobotContainer.mDriveRightStickX);
+    SmartDashboard.putNumber("RigthStick X", mLeftY.getAsDouble());
     // System.out.println("RightStick X" + mRobotContainer.mDriveRightStickX);
   }
 

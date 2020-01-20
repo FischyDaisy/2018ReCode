@@ -57,9 +57,10 @@ public class GoalTracking {
         logToDashBoard();
     }
     public void calculateDistance() {
-        double w = 320.0, a = 59.6, b = 49.7;
-        distanceToGoal = ((LENGTH * w)/(2.0 * tlong * Math.tan((b * (Math.PI / 180)) / 2.0)));
-        //distanceToGoal = (HEIGHT - LIMELIGHT_HEIGHT) / Math.tan((ty + (b / 2.0)) * (Math.PI / 180));
+        double w = 320.0, a = 59.6, b = 49.7, distMultiplier = 1.0 / 10.0;
+        distanceToGoal = ((LENGTH * w)/(2.0 * tlong * Math.tan(Math.toRadians(b / 2.0))));
+        //distanceToGoal = (HEIGHT - LIMELIGHT_HEIGHT) / Math.tan((ty + (b / 2.0)) * (Math.PI / 180.0));
+        distanceToGoal += distanceToGoal * distMultiplier;
     }
     public void logToDashBoard() {
         SmartDashboard.putNumber("Vision/tv", tv);
@@ -73,6 +74,6 @@ public class GoalTracking {
         SmartDashboard.putNumber("Vision/tlong", tlong);
         //System.out.println("tlong: " + tlong);
         SmartDashboard.putNumber("Vision/Distance To Goal", distanceToGoal);
-        //System.out.println("Distance To Goal: " + distanceToGoal);
+        System.out.println("Distance To Goal: " + distanceToGoal);
     }
 }

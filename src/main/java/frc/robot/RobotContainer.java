@@ -10,9 +10,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.AlignToGoal;
+import frc.robot.commands.DriveArcadeMode;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ExampleSubsystem;
@@ -70,9 +69,11 @@ public class RobotContainer {
     configureButtonBindings();
     // Configure the Commands
     mDrive.setDefaultCommand(
-      new RunCommand(() -> mDrive.setSpeedTurn(-1.0 * mDriverController.getDeadbandedLeftYAxis(Constants.XboxController.DEAD_BAND),
-        1.0 * mDriverController.getDeadbandedRightXAxis(Constants.XboxController.DEAD_BAND)), mDrive));
-  }
+      new DriveArcadeMode(
+        mDrive, 
+        () -> -1.0 * mDriverController.getDeadbandedLeftYAxis(Constants.XboxController.DEAD_BAND),
+        () -> 1.0 * mDriverController.getDeadbandedRightXAxis(Constants.XboxController.DEAD_BAND)));
+    }
 
   /**
    * Use this method to define your button->command mappings.  Buttons can be created by
@@ -82,10 +83,8 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     mDriverController = new XboxController(Constants.XboxController.DRIVER_PORT);
-    //mDriverController.ButtonA.whileHeld(() -> new AlignToGoal(), mDrive);
-    mDriverController.ButtonA.whenHeld(new AlignToGoal(mDrive));
-    //mDriverController.ButtonA.whileHeld(() -> mCommandScheduler.schedule(new AlignToGoal()), mDrive);
-    //mDriverController.ButtonA.whileHeld(mAlignToGoal);
+    mDriverController.ButtonA.whenHeld(new AlignToGoal(mDrive, 
+    () -> -1.0 * mDriverController.getDeadbandedLeftYAxis(Constants.XboxController.DEAD_BAND)));
   }
 
 
@@ -97,5 +96,12 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     return m_autoCommand;
+  }
+  public static double applyDeadband(double value, double deadband) {
+    if (value > -deadband && value < deadband) {
+      return 0.0;
+    } else {
+      return value;
+    }
   }
 }

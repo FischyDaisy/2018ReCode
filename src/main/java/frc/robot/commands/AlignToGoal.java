@@ -7,6 +7,8 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.DriveTrain;
@@ -19,9 +21,10 @@ public class AlignToGoal extends CommandBase {
   private GoalTracking mGoalTracker;
   private DriveTrain mDrive;
   private RobotContainer mRobotContainer;
+  private DoubleSupplier mLeftY;
   private double kPTurn = 1.0 / 18.0;
   private double kITurn = 0.05;
-  private double kDTurn = 0.035;//5;
+  private double kDTurn = 0.35;//5;
 
   private double distance;
   private double speed;
@@ -31,12 +34,12 @@ public class AlignToGoal extends CommandBase {
   private double turn;
   private double lastTime;
 
-  public AlignToGoal(DriveTrain drive) {
+  public AlignToGoal(DriveTrain drive, DoubleSupplier leftY) {
     // Use addRequirements() here to declare subsystem dependencies.
-    System.out.println("Created Command");
     mGoalTracker = GoalTracking.getInstance();
     mDrive = drive;
-    mRobotContainer = RobotContainer.getInstance();
+    mLeftY = leftY;
+    //mRobotContainer = RobotContainer.getInstance();
     addRequirements(mDrive);
     distance = 0.0;
     speed = 0.0;
@@ -45,29 +48,25 @@ public class AlignToGoal extends CommandBase {
     turn = 0.0;
     lastTurnError = 0.0;
     lastTime = 0.0;
-    //initialize();
-    //execute();
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    System.out.println("Initialized Command");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println("Executed Command");
+    lastTurnError = turnError;
     if (mGoalTracker.tv > 0.0) {
       turnError = mGoalTracker.tx;
-      turnSlope = turn - lastTurnError;
+      turnSlope = turnError - lastTurnError;
       turn = turnError * kPTurn + turnSlope * kDTurn; 
-      mDrive.setSpeedTurn(0.0, turn);
+      mDrive.setSpeedTurn(mLeftY.getAsDouble(), turn);
     } else {
       mDrive.setSpeedTurn(0.0, 0.0);
     }
-    lastTurnError = turn;
     System.out.println("Turn Error: " + turnError);
     System.out.println("Turn Slope: " + turnSlope);
     System.out.println("Turn: " + turn);
